@@ -1,0 +1,48 @@
+<%- include('partials/header', { title: 'Datasets' }) %>
+
+<h1 class="my-4">Upload a new dataset</h1>
+<form action="/upload" method="post" enctype="multipart/form-data" class="mb-4">
+    <div class="form-group">
+        <input type="file" name="dataset" class="form-control-file" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Upload</button>
+</form>
+
+<h2 class="my-4">Uploaded Datasets</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Created At</th>
+            <th scope="col">Status</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% datasets.forEach(dataset => { %>
+            <tr>
+                <td><a href="/details/<%= dataset.id %>"><%= dataset.created_at %></a></td>
+                <td>
+                    <span class="badge badge-sm
+                        <% if (dataset.status === "Finished") { %>
+                            badge-success
+                        <% } else { %>
+                            badge-info
+                        <% } %>
+                    ">
+                        <%= dataset.status %>
+                    </span>                    
+                </td>
+                <td>
+                    <% if (dataset.status === "Finished") { %>
+                        <a href="/details/<%= dataset.id %>" class="btn btn-sm btn-success">View Result</a>
+                        <form action="/retry/<%= dataset.id %>" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-sm btn-warning">Retry</button>
+                        </form>
+                    <% } %>
+                </td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<%- include('partials/footer') %>

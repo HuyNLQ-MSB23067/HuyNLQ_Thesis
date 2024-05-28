@@ -1,0 +1,99 @@
+<%- include('partials/header', { title: 'Dataset Details' }) %>
+
+<h1 class="my-4">Dataset: <%= dataset.filename %></h1>
+<p>Status: <%= dataset.status %></p>
+<% if (dataset.status === "Finished") { %>
+	<ul class="nav nav-tabs" id="nav-tab" role="tablist">
+		<li class="nav-item">
+	        <a class="nav-link active" id="nav-session-tab" data-toggle="tab" href="#nav-session" role="tab" aria-controls="nav-session" aria-selected="true">Session</a>
+	    </li>
+	    <li class="nav-item">
+	        <a class="nav-link" id="nav-transaction-tab" data-toggle="tab" href="#nav-transaction" role="tab" aria-controls="nav-transaction" aria-selected="false">Transaction</a>
+	    </li>
+	    <li class="nav-item">
+	        <a class="nav-link" id="nav-cvr-tab" data-toggle="tab" href="#nav-cvr" role="tab" aria-controls="nav-cvr" aria-selected="false">CVR</a>
+	    </li>
+	</ul>
+	<div class="tab-content" id="nav-tabContent">
+		<div class="tab-pane fade show active" id="nav-session" role="tabpanel" aria-labelledby="nav-session-tab">
+			<br>
+			<h3>Hourly</h3>
+			<hr>
+			<h4>ARIMA</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/hourly_session_count_A.png" class="img-fluid" alt="ARIMA Prediction">
+		    <h4>ARIMA-GARCH</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/hourly_session_count_AG.png" class="img-fluid" alt="ARIMA-GARCH Prediction">
+
+		    <hr>
+
+		    <h3>Daily</h3>
+		    <hr>
+		    <h4>ARIMA</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/daily_session_count_A.png" class="img-fluid" alt="ARIMA Prediction">
+		    <h4>ARIMA-GARCH</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/daily_session_count_AG.png" class="img-fluid" alt="ARIMA-GARCH Prediction">
+		    <hr>
+		</div>
+		<div class="tab-pane fade" id="nav-transaction" role="tabpanel" aria-labelledby="nav-transaction-tab">
+			<br>
+			<h3>Hourly</h3>
+			<hr>
+			<h4>ARIMA</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/hourly_total_transactions_A.png" class="img-fluid" alt="ARIMA Prediction">
+		    <h4>ARIMA-GARCH</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/hourly_total_transactions_AG.png" class="img-fluid" alt="ARIMA-GARCH Prediction">
+		    
+		    <hr>
+
+		    <h3>Daily</h3>
+		    <hr>
+			<h4>ARIMA</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/daily_total_transactions_A.png" class="img-fluid" alt="ARIMA Prediction">
+		    <h4>ARIMA-GARCH</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/daily_total_transactions_AG.png" class="img-fluid" alt="ARIMA-GARCH Prediction">
+
+		</div>
+		<div class="tab-pane fade" id="nav-cvr" role="tabpanel" aria-labelledby="nav-cvr-tab">
+			<br>
+			<h3>Hourly</h3>
+			<hr>
+			<h4>ARIMA</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/hourly_CVR_A.png" class="img-fluid" alt="ARIMA Prediction">
+		    <h4>ARIMA-GARCH</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/hourly_CVR_AG.png" class="img-fluid" alt="ARIMA-GARCH Prediction">
+
+		    <hr>
+
+		    <h3>Daily</h3>
+		    <hr>
+			<h4>ARIMA</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/daily_CVR_A.png" class="img-fluid" alt="ARIMA Prediction">
+		    <h4>ARIMA-GARCH</h4>
+		    <img src="/uploads/results/<%= dataset.id %>/daily_CVR_AG.png" class="img-fluid" alt="ARIMA-GARCH Prediction">
+		</div>
+	</div>	
+<% } else { %>	
+	<h3 class="my-4">Processing Logs</h2>
+	<hr>
+	<ul>
+		<% progressLogs.forEach(log => { %>
+	       <li><%= log.message %></li>
+	    <% }) %>
+	</ul>
+<% } %>
+
+<script>
+    const datasetId = <%= dataset.id %>;
+    const ws = new WebSocket(`ws://${window.location.host}/?datasetId=${datasetId}`);
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const logList = document.getElementById('progressLogs');
+        const newLog = document.createElement('li');
+        newLog.className = 'list-group-item';
+        newLog.textContent = data.message;
+        logList.appendChild(newLog);
+    };
+</script>
+
+<%- include('partials/footer') %>
