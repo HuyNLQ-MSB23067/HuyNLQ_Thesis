@@ -13,6 +13,7 @@ Prediction app for Session Counts, Transaction Counts and CVR from Google Analyt
 
  - install dependency `npm install --save-dev`
  - install MySQL, then run the query in `db_migrate.sql` file
+ - install Python3 and run the command `pip install pandas numpy matplotlib pmdarima seaborn statsmodels scikit-learn pickle5 sys os arch`
 
 ## Usage
 
