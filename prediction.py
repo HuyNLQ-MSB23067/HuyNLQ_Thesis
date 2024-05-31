@@ -6,8 +6,8 @@
 # Configuration
 MAX_DATA_HOUR = 672
 MAX_DATA_HOUR_PLOT = 96
-MAX_DATA_DAY = -1
-MAX_DATA_DAY_PLOT = -1
+MAX_DATA_DAY = 672
+MAX_DATA_DAY_PLOT = 96
 
 # Data processing
 import pandas as pd
@@ -114,73 +114,73 @@ def process_data(filepath, id):
     # --- ARIMA ---
 
     # ++ Hourly ++
-    # train_arima_model(df=df_hour,
-    #     max_train=MAX_DATA_HOUR,
-    #     target_data='session_count',
-    #     period_type='hourly',
-    #     m=24,
-    #     id=id)
+    train_arima_model(df=df_hour,
+        max_train=MAX_DATA_HOUR,
+        target_data='session_count',
+        period_type='hourly',
+        m=24,
+        id=id)
 
-    # train_arima_model(df=df_hour,
-    #     max_train=MAX_DATA_HOUR,
-    #     target_data='total_transactions',
-    #     period_type='hourly',
-    #     m=24,
-    #     id=id)
+    train_arima_model(df=df_hour,
+        max_train=MAX_DATA_HOUR,
+        target_data='total_transactions',
+        period_type='hourly',
+        m=24,
+        id=id)
 
-    # export_prediction(target_data='session_count',
-    #     period_type='hourly',
-    #     plot_title='Session Count Predition by Hour',
-    #     plot_value='Session Count',
-    #     max_plot_size=MAX_DATA_HOUR_PLOT,
-    #     freq='h',
-    #     model='A',
-    #     id=id)
+    export_prediction(target_data='session_count',
+        period_type='hourly',
+        plot_title='Session Count Predition by Hour',
+        plot_value='Session Count',
+        max_plot_size=MAX_DATA_HOUR_PLOT,
+        freq='h',
+        model='A',
+        id=id)
 
-    # export_prediction(target_data='session_count',
-    #     period_type='hourly',
-    #     plot_title='Session Count Prediction by Hour (ARIMA-GARCH)',
-    #     plot_value='Session Count',
-    #     max_plot_size=MAX_DATA_HOUR_PLOT,
-    #     freq='h',
-    #     model='AG',
-    #     id=id)
+    export_prediction(target_data='session_count',
+        period_type='hourly',
+        plot_title='Session Count Prediction by Hour (ARIMA-GARCH)',
+        plot_value='Session Count',
+        max_plot_size=MAX_DATA_HOUR_PLOT,
+        freq='h',
+        model='AG',
+        id=id)
 
-    # export_prediction(target_data='total_transactions',
-    #     period_type='hourly',
-    #     plot_title='Transaction Count Predition by Hour',
-    #     plot_value='Transaction Count',
-    #     max_plot_size=MAX_DATA_HOUR_PLOT,
-    #     freq='h',
-    #     model='A',
-    #     id=id)
+    export_prediction(target_data='total_transactions',
+        period_type='hourly',
+        plot_title='Transaction Count Predition by Hour',
+        plot_value='Transaction Count',
+        max_plot_size=MAX_DATA_HOUR_PLOT,
+        freq='H',
+        model='A',
+        id=id)
 
-    # export_prediction(target_data='total_transactions',
-    #     period_type='hourly',
-    #     plot_title='Transaction Count Prediction by Hour (ARIMA-GARCH)',
-    #     plot_value='Transaction Count',
-    #     max_plot_size=MAX_DATA_HOUR_PLOT,
-    #     freq='h',
-    #     model='AG',
-    #     id=id)
+    export_prediction(target_data='total_transactions',
+        period_type='hourly',
+        plot_title='Transaction Count Prediction by Hour (ARIMA-GARCH)',
+        plot_value='Transaction Count',
+        max_plot_size=MAX_DATA_HOUR_PLOT,
+        freq='H',
+        model='AG',
+        id=id)
 
-    # export_prediction(target_data='CVR',
-    #     period_type='hourly',
-    #     plot_title='CVR Prediction by Hour (ARIMA)',
-    #     plot_value='CVR',
-    #     max_plot_size=MAX_DATA_HOUR_PLOT,
-    #     freq='h',
-    #     model='A',
-    #     id=id)
+    export_prediction(target_data='CVR',
+        period_type='hourly',
+        plot_title='CVR Prediction by Hour (ARIMA)',
+        plot_value='CVR',
+        max_plot_size=MAX_DATA_HOUR_PLOT,
+        freq='H',
+        model='A',
+        id=id)
 
-    # export_prediction(target_data='CVR',
-    #     period_type='hourly',
-    #     plot_title='CVR Prediction by Hour (ARIMA-GARCH)',
-    #     plot_value='CVR',
-    #     max_plot_size=MAX_DATA_HOUR_PLOT,
-    #     freq='h',
-    #     model='AG',
-    #     id=id)
+    export_prediction(target_data='CVR',
+        period_type='hourly',
+        plot_title='CVR Prediction by Hour (ARIMA-GARCH)',
+        plot_value='CVR',
+        max_plot_size=MAX_DATA_HOUR_PLOT,
+        freq='H',
+        model='AG',
+        id=id)
 
     # ++ Daily ++
     train_arima_model(df=df_day,
@@ -199,7 +199,7 @@ def process_data(filepath, id):
 
     export_prediction(target_data='session_count',
         period_type='daily',
-        plot_title='Session Count Predition by Hour',
+        plot_title='Session Count Predition by Day',
         plot_value='Session Count',
         max_plot_size=MAX_DATA_DAY_PLOT,
         freq='D',
@@ -259,7 +259,7 @@ def train_arima_model(df, max_train, target_data, period_type, m, id):
         df_input = df[:-max_train]
     else:
         df_input = df
-        
+
     # Split train / test data by 8 : 2 ratio
     test_size = int(np.floor(len(df_input) / 5))
 
@@ -378,7 +378,7 @@ def export_prediction(target_data, period_type, plot_title, plot_value, max_plot
     prediction_df = prediction_df[1:]
 
     original_df.index = pd.to_datetime(original_df['timestamp_data'])
-    original_df = original_df[:MAX_DATA_HOUR_PLOT]
+    original_df = original_df[-max_plot_size:]
 
     # Adjust the prediction data index to start right after the original data's last timestamp
     last_timestamp = original_df.index[-1]
@@ -415,112 +415,9 @@ def export_prediction(target_data, period_type, plot_title, plot_value, max_plot
     # Save tne plot
     plt.savefig(f'./uploads/results/{id}/' + period_type + '_' + target_data + '_' + model + '.png')    
 
-# GARCH
-def train_garch_model(df, max_train, target_data, period_type, freq):
-    # Training Model
-    print('Building GARCH: ' + period_type + ' ' + target_data)
-    sys.stdout.flush()
-    df_input = df[:-max_train]
-    # Split train / test data by 8 : 2 ratio
-    test_size = int(np.floor(len(df_input) / 5))
-
-    df_target = df_input[target_data]
-    train, test = df_target.iloc[:-test_size], df_target.iloc[-test_size:]
-
-    min_aic = -1.0
-    min_aic_p = -1
-    min_aic_q = -1
-    for p in range(1, 5):
-        for q in range(1, 5):
-            garch_model = arch_model(train, vol='GARCH', p=p, q=q)
-            garch_model_fit = garch_model.fit()
-        if (min_aic == -1 or min_aic > garch_model_fit.aic):
-            min_aic = garch_model_fit.aic
-            min_aic_p = p
-            min_aic_q = q
-            best_garch_model = garch_model
-
-    best_garch_model_fit = best_garch_model.fit(disp='off')
-
-    garch_yhat = best_garch_model_fit.forecast(horizon=test_size)
-    garch_forecast_volatility = np.sqrt(garch_yhat.variance.values[-1, :])
-
-    # Calculate MAE and RMSE
-    mae = metrics.mean_absolute_error(test, garch_forecast_volatility)
-    mse = metrics.mean_squared_error(test, garch_forecast_volatility)
-    rmse = np.sqrt(mse)
-
-    print("MAE: " + str(mae))
-    sys.stdout.flush()
-    print("MSE: " + str(mse))
-    sys.stdout.flush()
-    print("RMSE: " + str(rmse))
-    sys.stdout.flush()
-
-    # Update
-    garch_model = arch_model(df_target, vol='GARCH', p=min_aic_p, q=min_aic_q)
-    garch_model_fit = garch_model.fit(disp='off')
-
-    # one-step out-of sample forecast
-    garch_forecast = garch_model_fit.forecast(horizon=48)
-    predicted_et = garch_forecast.mean['h.1'].iloc[-1]
-
 
 # MAIN
 if __name__ == "__main__":
     file_path = sys.argv[1]
     record_id = sys.argv[2]
     process_data(file_path, record_id)
-
-# Hourly train
-
-# train_arima_model(df=df_hour,
-#     max_train=MAX_DATA_HOUR,
-#     target_data='session_count',
-#     period_type='hourly',
-#     m=24)
-
-# train_arima_model(df=df_day,
-#     max_train=-1,
-#     target_data='session_count',
-#     period_type='daily',
-#     m=7)
-
-# export_prediction(target_data='session_count',
-#     period_type='hourly',
-#     plot_title='Session Count Predition by Hour',
-#     plot_value='Session Count',
-#     max_plot_size=MAX_DATA_HOUR_PLOT,
-#     freq='h',
-#     model='A')
-
-# export_prediction(target_data='session_count',
-#     period_type='hourly',
-#     plot_title='Session Count Prediction by Hour (ARIMA-GARCH)',
-#     plot_value='Session Count',
-#     max_plot_size=MAX_DATA_HOUR_PLOT,
-#     freq='h',
-#     model='AG')
-
-# train_arima_model(df=df_hour,
-#     max_train=MAX_DATA_HOUR,
-#     target_data='total_transactions',
-#     period_type='hourly',
-#     m=24)
-
-# export_prediction(target_data='total_transactions',
-#     period_type='hourly',
-#     plot_title='Transaction Count Predition by Hour',
-#     plot_value='Transaction Count',
-#     max_plot_size=MAX_DATA_HOUR_PLOT,
-#     freq='h',
-#     model='A')
-
-# export_prediction(target_data='CVR',
-#     period_type='hourly',
-#     plot_title='CVR Predition by Hour',
-#     plot_value='CVR',
-#     max_plot_size=MAX_DATA_HOUR_PLOT,
-#     freq='h',
-#     model='A')
-
